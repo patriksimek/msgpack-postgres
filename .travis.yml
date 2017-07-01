@@ -1,0 +1,9 @@
+services:
+  - postgresql
+
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -d travis_ci_test -f ./src/encode.sql -U postgres
+
+script:
+  - psql -d travis_ci_test -f ./test/encode.sql -U postgres
