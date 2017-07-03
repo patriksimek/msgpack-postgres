@@ -9,6 +9,8 @@ addons:
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres -v "ON_ERROR_STOP=1"
   - psql -d travis_ci_test -f ./src/encode.sql -U postgres -v "ON_ERROR_STOP=1"
+  - psql -d travis_ci_test -f ./src/decode.sql -U postgres -v "ON_ERROR_STOP=1"
 
 script:
   - psql -d travis_ci_test -f ./test/encode.sql -U postgres -v "ON_ERROR_STOP=1"
+  - psql -d travis_ci_test -f ./test/decode.sql -U postgres -v "ON_ERROR_STOP=1"

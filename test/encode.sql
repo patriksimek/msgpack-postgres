@@ -15,10 +15,15 @@ assert (select public.msgpack_encode('1337'::jsonb)) = decode('cd0539', 'hex'), 
 assert (select public.msgpack_encode('-1337'::jsonb)) = decode('d1fac7', 'hex'), 'Integer #6';
 assert (select public.msgpack_encode('133700'::jsonb)) = decode('ce00020a44', 'hex'), 'Integer #7';
 assert (select public.msgpack_encode('-133700'::jsonb)) = decode('d2fffdf5bc', 'hex'), 'Integer #8';
+assert (select public.msgpack_encode('2147483647'::jsonb)) = decode('ce7fffffff', 'hex'), 'Integer #9';
+assert (select public.msgpack_encode('-2147483647'::jsonb)) = decode('d280000001', 'hex'), 'Integer #10';
+assert (select public.msgpack_encode('9223372036854775807'::jsonb)) = decode('cf7fffffffffffffff', 'hex'), 'Integer #11';
+assert (select public.msgpack_encode('-9223372036854775807'::jsonb)) = decode('d38000000000000001', 'hex'), 'Integer #12';
 
 assert (select public.msgpack_encode('[]'::jsonb)) = decode('90', 'hex'), 'Array #1';
 assert (select public.msgpack_encode('[1]'::jsonb)) = decode('9101', 'hex'), 'Array #2';
 assert (select public.msgpack_encode('[1,"x"]'::jsonb)) = decode('9201a178', 'hex'), 'Array #3';
+assert (select public.msgpack_encode('[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]'::jsonb)) = decode('dc00100102030405060708090a0b0c0d0e0f10', 'hex'), 'Array #4';
 
 assert (select public.msgpack_encode('{}'::jsonb)) = decode('80', 'hex'), 'Object #1';
 assert (select public.msgpack_encode('{"a":1,"b":2}'::jsonb)) = decode('82a16101a16202', 'hex'), 'Object #2';

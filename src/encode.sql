@@ -73,53 +73,53 @@ begin
 						|| set_byte(E' '::bytea, 0, _numeric::integer);
 				elsif _numeric < 2 ^ 16 then
 					_pack = E'\\315'::bytea
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 8)
-						|| set_byte(E' '::bytea, 0, _numeric::integer);
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 8) & 255)
+						|| set_byte(E' '::bytea, 0, _numeric::integer & 255);
 				elsif _numeric < 2 ^ 32 then
 					_pack = E'\\316'::bytea
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 24)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 16)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 8)
-						|| set_byte(E' '::bytea, 0, _numeric::integer);
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 24) & 255)
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 16) & 255)
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 8) & 255)
+						|| set_byte(E' '::bytea, 0, _numeric::integer & 255);
 				elsif _numeric < 2 ^ 64 then
 					_pack = E'\\317'::bytea
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 56)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 48)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 40)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 32)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 24)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 16)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 8)
-						|| set_byte(E' '::bytea, 0, _numeric::integer);
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 56) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 48) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 40) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 32) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 24) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 16) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 8) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, (_numeric::bigint & 255)::integer);
 				else
 					raise exception 'Integer out of range.';
 				end if;
 			else
-				if _numeric > -2 ^ 5 then
+				if _numeric >= -2 ^ 5 then
 					_pack = set_byte(E' '::bytea, 0, _numeric::integer);
-				elsif _numeric > -2 ^ 7 then
+				elsif _numeric >= -2 ^ 7 then
 					_pack = E'\\320'::bytea
 						|| set_byte(E' '::bytea, 0, _numeric::integer);
-				elsif _numeric > -2 ^ 15 then
+				elsif _numeric >= -2 ^ 15 then
 					_pack = E'\\321'::bytea
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 8)
-						|| set_byte(E' '::bytea, 0, _numeric::integer);
-				elsif _numeric > -2 ^ 31 then
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 8) & 255)
+						|| set_byte(E' '::bytea, 0, _numeric::integer & 255);
+				elsif _numeric >= -2 ^ 31 then
 					_pack = E'\\322'::bytea
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 24)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 16)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 8)
-						|| set_byte(E' '::bytea, 0, _numeric::integer);
-				elsif _numeric > -2 ^ 63 then
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 24) & 255)
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 16) & 255)
+						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 8) & 255)
+						|| set_byte(E' '::bytea, 0, _numeric::integer & 255);
+				elsif _numeric >= -2 ^ 63 then
 					_pack = E'\\323'::bytea
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 56)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 48)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 40)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 32)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 24)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 16)
-						|| set_byte(E' '::bytea, 0, _numeric::integer >> 8)
-						|| set_byte(E' '::bytea, 0, _numeric::integer);
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 56) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 48) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 40) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 32) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 24) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 16) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 8) & 255)::integer)
+						|| set_byte(E' '::bytea, 0, (_numeric::bigint & 255)::integer);
 				else
 					raise exception 'Integer out of range.';
 				end if;
@@ -134,9 +134,15 @@ begin
 			elsif _size <= (2 ^ 8) - 1 then
 				_pack = E'\\331'::bytea || set_byte(E' '::bytea, 0, _size);
 			elsif _size <= (2 ^ 16) - 1 then
-				_pack = E'\\332'::bytea || set_byte(E' '::bytea, 0, _size);
+				_pack = E'\\332'::bytea
+					|| set_byte(E' '::bytea, 0, _size >> 8)
+					|| set_byte(E' '::bytea, 0, _size);
 			elsif _size <= (2 ^ 32) - 1 then
-				_pack = E'\\333'::bytea || set_byte(E' '::bytea, 0, _size);
+				_pack = E'\\333'::bytea
+					|| set_byte(E' '::bytea, 0, _size >> 24)
+					|| set_byte(E' '::bytea, 0, _size >> 16)
+					|| set_byte(E' '::bytea, 0, _size >> 8)
+					|| set_byte(E' '::bytea, 0, _size);
 			else
 				raise exception 'String is too long.';
 			end if;

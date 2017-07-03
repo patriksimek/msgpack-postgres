@@ -4,13 +4,16 @@ MessagePack implementation for PostgreSQL written in PL/pgSQL.
 
 ## Installation
 
-Execute src/encode.sql on your database server.
+Execute `src/encode.sql` or/and `src/decode.sql` on your database server.
 
 ## Quick Example
 
 ```sql
 select msgpack_encode('{"hello": "world"}'::jsonb);
 -- returns 0x81a568656c6c6fa5776f726c64
+
+select msgpack_decode(decode('81a568656c6c6fa5776f726c64', 'hex'));
+-- returns '{"hello": "world"}'
 ```
 
 ## Documentation
@@ -19,10 +22,17 @@ select msgpack_encode('{"hello": "world"}'::jsonb);
 
 Encodes `jsonb` object into `bytea` string.
 
+`msgpack_decode(jsonb)`
+
+Decodes `jsonb` object from `bytea` string.
+
 ## TODO
 
-- Decoder
-- Float support for encoder
+- Float support
+
+## Sponsors
+
+Development is sponsored by [Integromat](https://www.integromat.com/en/integrations/postgres).
 
 ## License
 
