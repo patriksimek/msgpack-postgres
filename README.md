@@ -22,7 +22,7 @@ select msgpack_decode(decode('81a568656c6c6fa5776f726c64', 'hex'));
 
 Encodes `jsonb` object into `bytea` string.
 
-`msgpack_decode(jsonb)`
+`msgpack_decode(bytea)`
 
 Decodes `jsonb` object from `bytea` string.
 
