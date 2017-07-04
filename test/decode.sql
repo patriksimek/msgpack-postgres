@@ -19,6 +19,13 @@ assert (select public.msgpack_decode(decode('ce7fffffff', 'hex'))::text) = '2147
 assert (select public.msgpack_decode(decode('d280000001', 'hex'))::text) = '-2147483647', 'Integer #10';
 assert (select public.msgpack_decode(decode('cf7fffffffffffffff', 'hex'))::text) = '9223372036854775807', 'Integer #11';
 assert (select public.msgpack_decode(decode('d38000000000000001', 'hex'))::text) = '-9223372036854775807', 'Integer #12';
+	
+assert (select public.msgpack_decode(decode('ca3fab22d1', 'hex'))::text) = '1.33700001239777', 'Float #1';
+assert (select public.msgpack_decode(decode('ca3ba3d70a', 'hex'))::text) = '0.00499999988824129', 'Float #2';
+
+assert (select public.msgpack_decode(decode('cb3ff5645a1cac0831', 'hex'))::text) = '1.337', 'Double #1';
+assert (select public.msgpack_decode(decode('cb3f747ae147ae147b', 'hex'))::text) = '0.005', 'Double #2';
+assert (select public.msgpack_decode(decode('cbbff5645a1cac0831', 'hex'))::text) = '-1.337', 'Double #3';
 
 assert (select public.msgpack_decode(decode('90', 'hex'))::text) = '[]', 'Array #1';
 assert (select public.msgpack_decode(decode('9101', 'hex'))::text) = '[1]', 'Array #2';

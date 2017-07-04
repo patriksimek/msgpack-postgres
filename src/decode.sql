@@ -7,6 +7,11 @@ declare _wrapper jsonb[];
 declare _counter integer[];
 declare _key text[];
 declare _json jsonb;
+declare _binary text;
+declare _exponent integer;
+declare _mantissa text;
+declare _float double precision;
+declare _index integer;
 begin
 
 	while _cursor < _length loop
@@ -22,6 +27,74 @@ begin
 			when 195 then -- true
 				_json = to_jsonb(true);
 				_cursor = _cursor + 1;
+			
+			when 202 then -- float 32
+				_binary = get_byte(_data, _cursor + 1)::bit(8)
+					|| get_byte(_data, _cursor + 2)::bit(8)
+					|| get_byte(_data, _cursor + 3)::bit(8)
+					|| get_byte(_data, _cursor + 4)::bit(8);
+				_exponent = substring(_binary, 2, 8)::bit(8)::integer;
+				_mantissa = substring(_binary, 10, 23);
+
+				if _exponent = 255 then
+					-- Infinity, -Infinity, NaN
+					_json = 'null'::jsonb;
+				else
+					_float = 1;
+					_index = 1;
+					_exponent = _exponent - 127;
+				
+					while _index < 24 loop
+						if substring(_mantissa, _index, 1) = '1' then
+							_float = _float + (2 ^ -(_index));
+						end if;
+						_index = _index + 1;
+					end loop;
+
+					_float = _float * (2 ^ _exponent);
+					if substring(_binary, 1, 1) = '1' then
+						_float = -_float;
+					end if;
+				end if;
+				
+				_json = to_jsonb(_float);
+				_cursor = _cursor + 5;
+			
+			when 203 then -- float 64
+				_binary = get_byte(_data, _cursor + 1)::bit(8)
+					|| get_byte(_data, _cursor + 2)::bit(8)
+					|| get_byte(_data, _cursor + 3)::bit(8)
+					|| get_byte(_data, _cursor + 4)::bit(8)
+					|| get_byte(_data, _cursor + 5)::bit(8)
+					|| get_byte(_data, _cursor + 6)::bit(8)
+					|| get_byte(_data, _cursor + 7)::bit(8)
+					|| get_byte(_data, _cursor + 8)::bit(8);
+				_exponent = substring(_binary, 2, 11)::bit(11)::integer;
+				_mantissa = substring(_binary, 13, 52);
+
+				if _exponent = 2047 then
+					-- Infinity, -Infinity, NaN
+					_json = 'null'::jsonb;
+				else
+					_float = 1;
+					_index = 1;
+					_exponent = _exponent - 1023;
+				
+					while _index < 53 loop
+						if substring(_mantissa, _index, 1) = '1' then
+							_float = _float + (2 ^ -(_index));
+						end if;
+						_index = _index + 1;
+					end loop;
+
+					_float = _float * (2 ^ _exponent);
+					if substring(_binary, 1, 1) = '1' then
+						_float = -_float;
+					end if;
+				end if;
+				
+				_json = to_jsonb(_float);
+				_cursor = _cursor + 9;
 			
 			when 204 then -- uint 8
 				_json = to_jsonb(get_byte(_data, _cursor + 1));
