@@ -29,7 +29,6 @@ Decodes `jsonb` object from `bytea` string.
 ## TODO
 
 - Float/double encoding
-- Ignore unsupported types when decoding
 
 ## Sponsors
 

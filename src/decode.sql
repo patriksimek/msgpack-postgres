@@ -28,6 +28,30 @@ begin
 				_json = to_jsonb(true);
 				_cursor = _cursor + 1;
 			
+			when 196 then -- bin 8
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 2;
+			
+			when 197 then -- bin 16
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 3;
+			
+			when 198 then -- bin 32
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 5;
+			
+			when 199 then -- ext 8
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 3;
+			
+			when 200 then -- ext 16
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 4;
+			
+			when 201 then -- ext 32
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 6;
+			
 			when 202 then -- float 32
 				_binary = get_byte(_data, _cursor + 1)::bit(8)
 					|| get_byte(_data, _cursor + 2)::bit(8)
@@ -149,6 +173,26 @@ begin
 					+ (get_byte(_data, _cursor + 7)::bigint << 8)
 					+ get_byte(_data, _cursor + 8)::bigint);
 				_cursor = _cursor + 9;
+			
+			when 212 then -- fixext 1
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 3;
+			
+			when 213 then -- fixext 2
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 4;
+			
+			when 214 then -- fixext 4
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 6;
+			
+			when 215 then -- fixext 8
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 10;
+			
+			when 216 then -- fixext 16
+				_json = 'null'::jsonb;
+				_cursor = _cursor + 18;
 			
 			when 217 then -- str 8
 				_size = get_byte(_data, _cursor + 1);
