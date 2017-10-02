@@ -122,7 +122,7 @@ begin
 			
 			when 204 then -- uint 8
 				_json = to_jsonb(get_byte(_data, _cursor + 1));
-				_cursor = _cursor + 1;
+				_cursor = _cursor + 2;
 			
 			when 205 then -- uint 16
 				_json = to_jsonb((get_byte(_data, _cursor + 1) << 8)
@@ -149,7 +149,7 @@ begin
 			
 			when 208 then -- int 8
 				_json = to_jsonb(-(2 ^ 8 - get_byte(_data, _cursor + 1)));
-				_cursor = _cursor + 1;
+				_cursor = _cursor + 2;
 			
 			when 209 then -- int 16
 				_json = to_jsonb(-(2 ^ 16 - (get_byte(_data, _cursor + 1) << 8)
