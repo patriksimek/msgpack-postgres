@@ -1,3 +1,75 @@
+--
+-- float_to_bytea adapted from https://github.com/feross/ieee754
+--
+create or replace function float_to_bytea(value float8, isLittleEndian boolean)
+returns bytea language plpgsql
+as $function$
+declare
+  m bigint;
+  numeric_e bigint;
+  _pack bytea := E'\\313        '::bytea;
+  mlen int := 52;
+  elen int := 64 - mlen - 1;
+  emax int := (1 << elen) - 1;
+  ebias int := emax >> 1;
+  rt numeric := case when mlen = 23 then power(2, -24) - power(2, -77) else 0 end;
+  i int := case when isLittleEndian then 0 else  7 end;
+  d int := case when isLittleEndian then 1 else -1 end;
+  s int := case when value < 0 OR (value = 0 AND 1 / value < 0) then 1 else 0 end;
+  e int := floor(ln(value) / ln(2));
+  c float8 := power(2, -e);
+begin
+  if (value * c) < 1 then
+    e := e - 1;
+    c := c * 2;
+  end if;
+
+  if (e + ebias) >= 1 then
+    value := value + (rt / c);
+  else
+    value := value + (rt * power(2, (1 - ebias)));
+  end if;
+
+  if (value * c) >= 2 then
+    e := e + 1;
+    c := c / 2;
+  end if;
+
+  if (e + ebias) >= emax then
+    m = 0;
+    e = emax;
+  elsif (e + ebias) >= 1 then
+    m = (((value * c) - 1) * power(2, mlen))::bigint;
+    e = e + ebias;
+  else
+    m = value * power(2, (eBias - 1)) * power(2, mlen);
+    e = 0;
+  end if;
+
+  loop
+    exit when mlen < 8;
+    _pack := set_byte(_pack, 1 + i, (m::bigint & 255)::int);
+    i := i + d;
+    m := m / 256;
+    mlen := mlen - 8;
+  end loop;
+
+  numeric_e = (e << mlen)::bigint | trunc(m)::bigint;
+  elen := elen + mlen;
+
+  loop
+    exit when elen <= 0;
+    _pack := set_byte(_pack, 1 + i, (numeric_e & 255)::int);
+    i := i + d;
+    numeric_e := numeric_e / 256;
+    elen := elen - 8;
+  end loop;
+
+  _pack := set_byte(_pack, 1 + i - d, get_byte(_pack, 1 + i - d) | trunc(s * 128)::int);
+  return _pack;
+end;
+$function$;
+
 create or replace function msgpack_encode(_data jsonb) returns bytea language plpgsql
 as $function$
 declare _size integer;
@@ -61,10 +133,9 @@ begin
 		when 'number' then
 			_numeric = (_data#>>'{}')::numeric;
 			if _numeric % 1 != 0 then
-				raise exception 'Float not implemented yet.';
-			end if;
-
-			if _numeric > 0 then
+				-- treat all floats as 64-bit floats
+				_pack = float_to_bytea(_numeric, false);	
+			elsif _numeric > 0 then
 				-- Integer
 				if _numeric < 2 ^ 7 then
 					_pack = set_byte(E' '::bytea, 0, _numeric::integer);
