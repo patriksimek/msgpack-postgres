@@ -142,17 +142,17 @@ begin
 				elsif _numeric < 2 ^ 8 then
 					_pack = E'\\314'::bytea
 						|| set_byte(E' '::bytea, 0, _numeric::integer);
-				elsif _numeric < 2 ^ 16 then
+				elsif _numeric < 2 ^ 15 then
 					_pack = E'\\315'::bytea
 						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 8) & 255)
 						|| set_byte(E' '::bytea, 0, _numeric::integer & 255);
-				elsif _numeric < 2 ^ 32 then
+				elsif _numeric < 2 ^ 31 then
 					_pack = E'\\316'::bytea
 						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 24) & 255)
 						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 16) & 255)
 						|| set_byte(E' '::bytea, 0, (_numeric::integer >> 8) & 255)
 						|| set_byte(E' '::bytea, 0, _numeric::integer & 255);
-				elsif _numeric < 2 ^ 64 then
+				elsif _numeric < 2 ^ 63 then
 					_pack = E'\\317'::bytea
 						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 56) & 255)::integer)
 						|| set_byte(E' '::bytea, 0, ((_numeric::bigint >> 48) & 255)::integer)
