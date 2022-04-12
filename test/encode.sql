@@ -20,6 +20,10 @@ assert (select public.msgpack_encode('-2147483647'::jsonb)) = decode('d280000001
 assert (select public.msgpack_encode('9223372036854775807'::jsonb)) = decode('cf7fffffffffffffff', 'hex'), 'Integer #11';
 assert (select public.msgpack_encode('-9223372036854775807'::jsonb)) = decode('d38000000000000001', 'hex'), 'Integer #12';
 
+assert (select public.msgpack_encode('1.337'::jsonb) = decode('cb3ff5645a1cac0831', 'hex')), 'Double #1';
+assert (select public.msgpack_encode('0.005'::jsonb) = decode('cb3f747ae147ae147b', 'hex')), 'Double #2';
+assert (select public.msgpack_encode('-1.337'::jsonb) = decode('cbbff5645a1cac0831', 'hex')), 'Double #3';
+
 assert (select public.msgpack_encode('[]'::jsonb)) = decode('90', 'hex'), 'Array #1';
 assert (select public.msgpack_encode('[1]'::jsonb)) = decode('9101', 'hex'), 'Array #2';
 assert (select public.msgpack_encode('[1,"x"]'::jsonb)) = decode('9201a178', 'hex'), 'Array #3';
