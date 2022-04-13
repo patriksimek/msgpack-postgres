@@ -26,10 +26,6 @@ Encodes `jsonb` object into `bytea` string.
 
 Decodes `jsonb` object from `bytea` string.
 
-## TODO
-
-- Float/double encoding
-
 ## Sponsors
 
 Development is sponsored by [Integromat](https://www.integromat.com/en/integrations/postgres).

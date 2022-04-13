@@ -61,10 +61,10 @@ begin
 		when 'number' then
 			_numeric = (_data#>>'{}')::numeric;
 			if _numeric % 1 != 0 then
-				raise exception 'Float not implemented yet.';
-			end if;
+				-- Float
+				_pack = E'\\313' || float8send(_numeric::float8);
 
-			if _numeric > 0 then
+			elsif _numeric > 0 then
 				-- Integer
 				if _numeric < 2 ^ 7 then
 					_pack = set_byte(E' '::bytea, 0, _numeric::integer);
